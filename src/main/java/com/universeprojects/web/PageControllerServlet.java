@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * TODO: add javadoc
+ * This servlet takes care of routing incoming requests to appropriate page controllers.
+ * The system only needs this single servlet to function, regardless of how many controllers are defined.
  */
 public class PageControllerServlet extends HttpServlet {
 
