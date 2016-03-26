@@ -1,9 +1,12 @@
 package com.universeprojects.web;
 
 import com.universeprojects.common.shared.log.Logger;
+import com.universeprojects.common.shared.util.Dev;
 import com.universeprojects.common.shared.util.DevException;
 import com.universeprojects.common.shared.util.Strings;
+import org.reflections.Reflections;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,9 +18,12 @@ import java.util.Set;
 
 /**
  * Singleton class;
- * Stores a registration of all page-controllers in a system ({@link PageController}).
+ * Stores a registration of all page-controllers in a system.
+ *
+ * This is a singleton, because it's accessed from {@link PageControllerServlet}, and there can be
+ * multiple instances of the same type of servlet, in order to scale system performance.
  */
-public class ControllerRegistry {
+class ControllerRegistry {
 
     private final static Logger log = Logger.getLogger(ControllerRegistry.class);
 
@@ -28,21 +34,64 @@ public class ControllerRegistry {
     private ControllerRegistry() {}
 
     /** Holds a reference to the servlet context */
-    private ServletContext servletContext = null;
+    private boolean initialized = false;
 
     /**
-     * This needs to be called to set the servlet context, before any controllers are registered.
-     * Controller verification will fail otherwise.
+     * This is called at servlet-initialization time, to detect all the page-controllers
+     * that are present on the classpath, and to register them for use with the dispatcher servlet.
+     *
+     * @param servletConfig Reference to the ServletConfig object of PageControllerServlet
      */
-    public void setServletContext(ServletContext servletContext) {
-        if (this.servletContext != null) {
-            throw new DevException("ServletContext reference already set");
+    synchronized void initialize(ServletConfig servletConfig) {
+        if (initialized) {
+            // ignore this call, if the registry is already initialized
+            return;
         }
-        if (servletContext == null) {
-            throw new IllegalArgumentException("ServletContext reference can't be null");
+
+        Dev.checkNotNull(servletConfig);
+        ServletContext servletContext = servletConfig.getServletContext();
+
+        String baseScanPackage = servletConfig.getInitParameter("baseScanPackage");
+        if (Strings.isEmpty(baseScanPackage)) {
+            throw new java.lang.RuntimeException("Init parameter \"baseScanPackage\" must be set in web.xml, " +
+                    "on servlet " + PageControllerServlet.class.getSimpleName());
         }
-        this.servletContext = servletContext;
+
+        log.info("Scanning for page-controller classes in package " + Strings.inQuotes(baseScanPackage));
+        Reflections reflections = new Reflections(baseScanPackage);
+        Set<Class<? extends PageController>> controllerClasses = reflections.getSubTypesOf(PageController.class);
+
+        for (Class<? extends PageController> controllerClass : controllerClasses) {
+            if (!controllerClass.isAnnotationPresent(Controller.class)) {
+                log.warn("Ignoring controller class " + Strings.inQuotes(controllerClass.getName()) +
+                        " because it's not annotated with @" + Controller.class.getSimpleName());
+                continue;
+            }
+
+            log.info("Registering controller: " + controllerClass.getSimpleName());
+            final PageController controller;
+            try {
+                controller = controllerClass.newInstance();
+            }
+            catch (InstantiationException | IllegalAccessException e) {
+                throw new DevException("Problem creating an instance of class " + Strings.inQuotes(controllerClass.getName()) +
+                        ". The controller class must declare a public no-arg constructor " + controllerClass.getSimpleName() + "()", e);
+            }
+
+            verifyController(controller, servletContext);
+            registerController(controller);
+        }
+
+
+        if (controllers.isEmpty()) {
+            log.warn("No page-controller classes registered with the dispatcher servlet");
+        }
+        else {
+            log.info("Registered " + controllers.size() + " page-controllers");
+        }
+
     }
+
 
     /**
      * A set of the registered controllers. Used to make sure that the same controller isn't added twice.
@@ -57,7 +106,7 @@ public class ControllerRegistry {
     /**
      * Registers a controller with the page-dispatch system
      */
-    public void registerController(PageController controller) {
+    private void registerController(PageController controller) {
         if (controller == null) {
             throw new IllegalArgumentException("Controller can't be null");
         }
@@ -70,8 +119,6 @@ public class ControllerRegistry {
             throw new IllegalArgumentException("Controller already registered under page name " + Strings.inQuotes(pageName));
         }
 
-        verifyController(controller);
-
         controllers.add(controller);
         controllersByPageName.put(pageName, controller);
 
@@ -80,12 +127,11 @@ public class ControllerRegistry {
 
     /**
      * (Helper method)
-     * Performs verification checks on a given controller.
+     * Performs verification checks on a given controller. To be called before registration takes place.
      */
-    private void verifyController(PageController controller) {
-        if (servletContext == null) {
-            throw new DevException("Servlet context reference not set. It is required for controller verification.");
-        }
+    private void verifyController(PageController controller, ServletContext servletContext) {
+        Dev.checkNotNull(servletContext);
+        Dev.checkNotNull(controller);
 
         String jspResourcePath = controller.getJspPath();
         URL jspUrl;
@@ -108,7 +154,7 @@ public class ControllerRegistry {
      *
      * @return The controller instance, or NULL if nothing was found
      */
-    public PageController getController(String pageName) {
+    PageController getController(String pageName) {
         if (Strings.isEmpty(pageName)) {
             throw new IllegalArgumentException("Page name can't be empty");
         }

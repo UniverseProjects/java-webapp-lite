@@ -19,6 +19,12 @@ public class PageControllerServlet extends HttpServlet {
     private final static Logger log = Logger.getLogger(PageControllerServlet.class);
 
     @Override
+    public void init() throws ServletException {
+        // This will detect & register all controllers that are on the classpath
+        ControllerRegistry.INSTANCE.initialize(getServletConfig());
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("GET request");
         // TODO: When the page is loaded for the first time, static resources are requested separately (CSS, JS, images)

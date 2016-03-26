@@ -5,4 +5,6 @@ apply plugin: 'war'
 dependencies {
 	compile project(':UPCommon')
     compile project(':UPLog')
+
+    compile 'org.reflections:reflections:0.9.10'
 }
