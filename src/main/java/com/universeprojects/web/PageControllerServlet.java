@@ -47,7 +47,7 @@ public class PageControllerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.info("GET request");
+        log.debug("Processing GET request");
         // TODO: When the page is loaded for the first time, static resources are requested separately (CSS, JS, images)
         // TODO: I think that these N requests are routed to this method. If confirmed, the extra calls should be ignored!
 
