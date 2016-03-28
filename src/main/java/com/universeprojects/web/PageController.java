@@ -23,8 +23,8 @@ import java.io.IOException;
  */
 public abstract class PageController {
 
-    private final String pageName;
-    private final String jspResourcePath;
+    protected final String pageName;
+    protected final String jspResourcePath;
 
     /**
      * Creates an instance of a controller for a page in the web-application.<br/>
@@ -64,7 +64,16 @@ public abstract class PageController {
     /**
      * (To be implemented by child class)
      * Handles a GET request, to load the page
+     *
+     * @return - If processing the request establishes that we would like to proceed to display the page,
+     *         this method returns the resource address of the corresponding JSP.
+     *         You may use the protected final field {@link PageController#jspResourcePath}.
+     *         <p>
+     *         - If processing the request establishes that we don't want to display the page, this method returns NULL.
+     *         For example, in the event of a redirect to another URL or an HTTP error.
+     *         These instructions are expected to already be applied to the request object.
+     *
      */
-    protected abstract void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    protected abstract String doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
 }

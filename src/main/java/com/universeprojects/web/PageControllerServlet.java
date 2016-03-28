@@ -53,15 +53,22 @@ public class PageControllerServlet extends HttpServlet {
 
         PageController controller = getController(request, response);
         if (controller == null) {
+            // controller not found for this URL - abort
             return;
         }
 
         // TODO: For now, pass the request/response along to the controller
         // TODO: In the future, create a suitable abstraction to limit the controller's power
-        controller.doGet(request, response);
+        String targetJspResourcePath = controller.doGet(request, response);
+        if (Strings.isEmpty(targetJspResourcePath)) {
+            // NULL or "empty" return value indicates that we do not want to display the target page,
+            // due to something that was established during the processing of this request. It is assumed
+            // that the request object now knows what to do next (URL redirect, HTTP error, etc.)
+            return;
+        }
 
-        // The request has been pre-processed by the controller. Forward to the matching JSP.
-        request.getRequestDispatcher(controller.getJspPath()).forward(request, response);
+        // The request has been processed by the controller without issues, and now we're ready to display the target JSP
+        request.getRequestDispatcher(targetJspResourcePath).forward(request, response);
     }
 
     /**
