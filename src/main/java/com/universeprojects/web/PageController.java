@@ -35,7 +35,7 @@ public abstract class PageController {
     /**
      * Returns the page name registered with this controller
      */
-    public String getPageName() {
+    String getPageName() {
         return pageName;
     }
 
@@ -44,7 +44,7 @@ public abstract class PageController {
      * <p>
      * NOTE: The JSPs are inside of the WEB-INF directory in order to not be served upon direct access
      */
-    public String getJspPath() {
+    String getJspPath() {
         return "/WEB-INF/pages/" + pageName + ".jsp";
     }
 
@@ -52,6 +52,6 @@ public abstract class PageController {
      * (To be implemented by child class)
      * Handles a GET request, to load the page
      */
-    public abstract void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    protected abstract void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
 }
