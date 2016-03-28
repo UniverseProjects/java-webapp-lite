@@ -4,6 +4,7 @@ import com.universeprojects.common.shared.log.Logger;
 import com.universeprojects.common.shared.util.Dev;
 import com.universeprojects.common.shared.util.Strings;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +21,17 @@ public class PageControllerServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        ServletConfig servletConfig = getServletConfig();
+        String servletName = servletConfig.getServletName();
+
+        // Verify the servlet config parameters, that were supposed to be set in web.xml
+        String baseScanPackage = servletConfig.getInitParameter("baseScanPackage");
+        if (Strings.isEmpty(baseScanPackage)) {
+            throw new RuntimeException("Servlet init parameter \"baseScanPackage\" for servlet " + servletName + " must be set in web.xml");
+        }
+
         // This will detect & register all controllers that are on the classpath
-        ControllerRegistry.INSTANCE.initialize(getServletConfig());
+        ControllerRegistry.INSTANCE.initialize(servletConfig);
     }
 
     @Override

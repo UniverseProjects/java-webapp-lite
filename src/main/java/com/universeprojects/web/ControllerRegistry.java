@@ -49,13 +49,8 @@ class ControllerRegistry {
         }
 
         Dev.checkNotNull(servletConfig);
-        ServletContext servletContext = servletConfig.getServletContext();
-
         String baseScanPackage = servletConfig.getInitParameter("baseScanPackage");
-        if (Strings.isEmpty(baseScanPackage)) {
-            throw new java.lang.RuntimeException("Init parameter \"baseScanPackage\" must be set in web.xml, " +
-                    "on servlet " + PageControllerServlet.class.getSimpleName());
-        }
+        Dev.checkNotEmpty(baseScanPackage); // expected to already be verified by the caller
 
         log.info("Scanning for page-controller classes in package " + Strings.inQuotes(baseScanPackage));
         Reflections reflections = new Reflections(baseScanPackage);
@@ -78,7 +73,7 @@ class ControllerRegistry {
                         ". The controller class must declare a public no-arg constructor " + controllerClass.getSimpleName() + "()", e);
             }
 
-            verifyController(controller, servletContext);
+            verifyController(controller, servletConfig.getServletContext());
             registerController(controller);
         }
 
