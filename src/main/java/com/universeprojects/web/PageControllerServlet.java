@@ -19,12 +19,23 @@ public class PageControllerServlet extends HttpServlet {
 
     private final static Logger log = Logger.getLogger(PageControllerServlet.class);
 
+    private String uriPrefix;
+
     @Override
     public void init() throws ServletException {
         ServletConfig servletConfig = getServletConfig();
         String servletName = servletConfig.getServletName();
 
         // Verify the servlet config parameters, that were supposed to be set in web.xml
+        String uriPrefix = servletConfig.getInitParameter("uriPrefix");
+        if (Strings.isEmpty(uriPrefix)) {
+            throw new RuntimeException("Servlet init parameter \"uriPrefix\" for servlet " + servletName + " must be set in web.xml");
+        }
+        if (!uriPrefix.startsWith("/") || !uriPrefix.endsWith("/")) {
+            throw new RuntimeException("Servlet init parameter \"uriPrefix\" for servlet " + servletName + " must begin and end with '/'");
+        }
+        this.uriPrefix = uriPrefix;
+
         String baseScanPackage = servletConfig.getInitParameter("baseScanPackage");
         if (Strings.isEmpty(baseScanPackage)) {
             throw new RuntimeException("Servlet init parameter \"baseScanPackage\" for servlet " + servletName + " must be set in web.xml");
@@ -62,14 +73,14 @@ public class PageControllerServlet extends HttpServlet {
      */
     private PageController getController(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestURI = request.getRequestURI();
-        if (!requestURI.matches("/pages/\\w+")) {
+        if (!requestURI.matches(uriPrefix + "\\w+")) {
             // If the URL doesn't match the expected format, redirect to root
             response.sendRedirect("/");
             return null;
         }
 
-        String pageName = requestURI.substring(7);
-        Dev.check(!Strings.isEmpty(pageName), "Looks like someone messed with the routing of page-URLs"); // regression-check
+        String pageName = requestURI.substring(uriPrefix.length());
+        Dev.check(!Strings.isEmpty(pageName), "Looks like someone messed with page-controller URL routing"); // regression-check
 
         PageController controller = ControllerRegistry.INSTANCE.getController(pageName);
         if (controller == null) {

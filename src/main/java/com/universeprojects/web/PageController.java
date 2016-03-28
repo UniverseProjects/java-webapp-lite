@@ -24,12 +24,27 @@ import java.io.IOException;
 public abstract class PageController {
 
     private final String pageName;
+    private final String jspResourcePath;
 
-    protected PageController(String pageName) {
+    /**
+     * Creates an instance of a controller for a page in the web-application.<br/>
+     * The controller is in charge of pre-processing requests, before the actual page is displayed.
+     *
+     * @param pageName The name of the page (unique identifier), for example - "news"
+     * @param jspResourcePath The path to the JSP that contains the page content, for example - "/WEB-INF/pages/news.jsp" <br/>
+     *        It's recommended to store your JSPs in the WEB-INF directory in order to prevent direct access from the browser
+     *
+     */
+    protected PageController(String pageName, String jspResourcePath) {
         if (Strings.isEmpty(pageName)) {
             throw new IllegalArgumentException("Page name can't be empty");
         }
+        if (Strings.isEmpty(jspResourcePath) || !jspResourcePath.endsWith(".jsp")) {
+            throw new IllegalArgumentException("Invalid JSP resource path: " + jspResourcePath);
+        }
+
         this.pageName = pageName;
+        this.jspResourcePath = jspResourcePath;
     }
 
     /**
@@ -41,11 +56,9 @@ public abstract class PageController {
 
     /**
      * Returns the path to the JSP file to be used with this controller
-     * <p>
-     * NOTE: The JSPs are inside of the WEB-INF directory in order to not be served upon direct access
      */
     String getJspPath() {
-        return "/WEB-INF/pages/" + pageName + ".jsp";
+        return jspResourcePath;
     }
 
     /**
