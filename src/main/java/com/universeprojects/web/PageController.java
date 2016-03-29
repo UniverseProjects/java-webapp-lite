@@ -43,8 +43,29 @@ public abstract class PageController {
     /**
      * Returns the page name registered with this controller
      */
-    String getPageName() {
+    protected String getPageName() {
         return pageName;
+    }
+
+    private ThreadLocal<HttpServletRequest> threadLocalRequest = new ThreadLocal<>();
+    private ThreadLocal<HttpServletResponse> threadLocalResponse = new ThreadLocal<>();
+
+    void setupThreadLocal(HttpServletRequest request, HttpServletResponse response) {
+        threadLocalRequest.set(request);
+        threadLocalResponse.set(response);
+    }
+
+    void clearThreadLocal() {
+        threadLocalRequest.set(null);
+        threadLocalResponse.set(null);
+    }
+
+    protected HttpServletRequest getRequest() {
+        return threadLocalRequest.get();
+    }
+
+    protected HttpServletResponse getResponse() {
+        return threadLocalResponse.get();
     }
 
     /**
@@ -60,6 +81,6 @@ public abstract class PageController {
      *         These instructions are expected to already be applied to the request object.
      *
      */
-    protected abstract String doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    protected abstract String processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
 }

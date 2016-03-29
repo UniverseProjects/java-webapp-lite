@@ -16,7 +16,7 @@ import java.util.Set;
  * Singleton class;
  * Stores a registration of all page-controllers in a system.
  *
- * This is a singleton, because it's accessed from {@link PageControllerServlet}, and there can be
+ * This is a singleton, because it's accessed from {@link PageControllerFilter}, and there can be
  * multiple instances of the same type of servlet, in order to scale system performance.
  */
 class ControllerRegistry {
@@ -77,7 +77,7 @@ class ControllerRegistry {
         else {
             log.info("Registered " + controllers.size() + " page-controllers");
         }
-
+        initialized = true;
     }
 
 
@@ -120,7 +120,8 @@ class ControllerRegistry {
      */
     PageController getController(String pageName) {
         if (Strings.isEmpty(pageName)) {
-            throw new IllegalArgumentException("Page name can't be empty");
+            pageName = "/";
+            //throw new IllegalArgumentException("Page name can't be empty");
         }
         return controllersByPageName.get(pageName);
     }
