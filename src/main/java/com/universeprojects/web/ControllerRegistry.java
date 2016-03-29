@@ -6,10 +6,6 @@ import com.universeprojects.common.shared.util.DevException;
 import com.universeprojects.common.shared.util.Strings;
 import org.reflections.Reflections;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,17 +36,15 @@ class ControllerRegistry {
      * This is called at servlet-initialization time, to detect all the page-controllers
      * that are present on the classpath, and to register them for use with the dispatcher servlet.
      *
-     * @param servletConfig Reference to the ServletConfig object of PageControllerServlet
+     * @param baseScanPackage The package that the scan is restricted to. For example, "com.universeprojects.myapp.controllers".<br/>
+     *                        A less-restricted package, such as "com", would cause the scan to be noticeably slower.
      */
-    synchronized void initialize(ServletConfig servletConfig) {
+    synchronized void initialize(String baseScanPackage) {
         if (initialized) {
             // ignore this call, if the registry is already initialized
             return;
         }
-
-        Dev.checkNotNull(servletConfig);
-        String baseScanPackage = servletConfig.getInitParameter("baseScanPackage");
-        Dev.checkNotEmpty(baseScanPackage); // expected to already be verified by the caller
+        Dev.checkNotEmpty(baseScanPackage); // expected to be verified by the caller
 
         log.info("Scanning for page-controller classes in package " + Strings.inQuotes(baseScanPackage));
         Reflections reflections = new Reflections(baseScanPackage);
@@ -73,7 +67,6 @@ class ControllerRegistry {
                         ". The controller class must declare a public no-arg constructor " + controllerClass.getSimpleName() + "()", e);
             }
 
-            verifyController(controller, servletConfig.getServletContext());
             registerController(controller);
         }
 
@@ -118,30 +111,6 @@ class ControllerRegistry {
         controllersByPageName.put(pageName, controller);
 
         log.info("Registered controller for page " + Strings.inQuotes(pageName) + ": " + controllerClassFullName);
-    }
-
-    /**
-     * (Helper method)
-     * Performs verification checks on a given controller. To be called before registration takes place.
-     */
-    private void verifyController(PageController controller, ServletContext servletContext) {
-        Dev.checkNotNull(servletContext);
-        Dev.checkNotNull(controller);
-
-        String jspResourcePath = controller.getJspPath();
-        URL jspUrl;
-        try {
-            jspUrl = servletContext.getResource(jspResourcePath);
-        }
-        catch (MalformedURLException e) {
-            // This is indicative of a code problem
-            throw new DevException("Malformed URL encountered when verifying controller: " + jspResourcePath, e);
-        }
-
-        if (jspUrl == null) {
-            throw new RuntimeException("JSP not found for page " + Strings.inQuotes(controller.getPageName()) +
-                    ", at path: " + jspResourcePath);
-        }
     }
 
     /**

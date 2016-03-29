@@ -24,27 +24,20 @@ import java.io.IOException;
 public abstract class PageController {
 
     protected final String pageName;
-    protected final String jspResourcePath;
 
     /**
      * Creates an instance of a controller for a page in the web-application.<br/>
      * The controller is in charge of pre-processing requests, before the actual page is displayed.
      *
      * @param pageName The name of the page (unique identifier), for example - "news"
-     * @param jspResourcePath The path to the JSP that contains the page content, for example - "/WEB-INF/pages/news.jsp" <br/>
-     *        It's recommended to store your JSPs in the WEB-INF directory in order to prevent direct access from the browser
      *
      */
-    protected PageController(String pageName, String jspResourcePath) {
+    protected PageController(String pageName) {
         if (Strings.isEmpty(pageName)) {
             throw new IllegalArgumentException("Page name can't be empty");
         }
-        if (Strings.isEmpty(jspResourcePath) || !jspResourcePath.endsWith(".jsp")) {
-            throw new IllegalArgumentException("Invalid JSP resource path: " + jspResourcePath);
-        }
 
         this.pageName = pageName;
-        this.jspResourcePath = jspResourcePath;
     }
 
     /**
@@ -55,19 +48,12 @@ public abstract class PageController {
     }
 
     /**
-     * Returns the path to the JSP file to be used with this controller
-     */
-    String getJspPath() {
-        return jspResourcePath;
-    }
-
-    /**
      * (To be implemented by child class)
      * Handles a GET request, to load the page
      *
      * @return - If processing the request establishes that we would like to proceed to display the page,
-     *         this method returns the resource address of the corresponding JSP.
-     *         You may use the protected final field {@link PageController#jspResourcePath}.
+     *         this method returns the resource address of the corresponding JSP. For example, "/WEB-INF/pages/news.jsp"<br/>
+     *         It's recommended to store your JSPs in the WEB-INF directory in order to prevent direct access from the browser
      *         <p>
      *         - If processing the request establishes that we don't want to display the page, this method returns NULL.
      *         For example, in the event of a redirect to another URL or an HTTP error.

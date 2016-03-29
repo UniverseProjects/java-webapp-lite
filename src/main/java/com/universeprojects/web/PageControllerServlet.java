@@ -42,7 +42,7 @@ public class PageControllerServlet extends HttpServlet {
         }
 
         // This will detect & register all controllers that are on the classpath
-        ControllerRegistry.INSTANCE.initialize(servletConfig);
+        ControllerRegistry.INSTANCE.initialize(baseScanPackage);
     }
 
     @Override
