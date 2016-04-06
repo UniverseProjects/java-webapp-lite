@@ -22,19 +22,19 @@ public class PageControllerFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         String filterName = filterConfig.getFilterName();
 
-        // Verify the servlet config parameters, that were supposed to be set in web.xml
+        // Verify the init parameters, that were supposed to be set in web.xml
         String uriPrefix = filterConfig.getInitParameter("uriPrefix");
         if (Strings.isEmpty(uriPrefix)) {
-            throw new RuntimeException("Servlet init parameter \"uriPrefix\" for servlet " + filterName + " must be set in web.xml");
+            throw new RuntimeException("Init parameter \"uriPrefix\" for filter " + filterName + " must be set in web.xml");
         }
         if (!uriPrefix.startsWith("/") || !uriPrefix.endsWith("/")) {
-            throw new RuntimeException("Servlet init parameter \"uriPrefix\" for servlet " + filterName + " must begin and end with '/'");
+            throw new RuntimeException("Init parameter \"uriPrefix\" for filter " + filterName + " must begin and end with '/'");
         }
         this.uriPrefix = uriPrefix;
 
         String baseScanPackage = filterConfig.getInitParameter("baseScanPackage");
         if (Strings.isEmpty(baseScanPackage)) {
-            throw new RuntimeException("Servlet init parameter \"baseScanPackage\" for servlet " + filterName + " must be set in web.xml");
+            throw new RuntimeException("Init parameter \"baseScanPackage\" for filter " + filterName + " must be set in web.xml");
         }
 
         // This will detect & register all controllers that are on the classpath
