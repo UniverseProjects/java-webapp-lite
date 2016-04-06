@@ -6,6 +6,7 @@ import com.universeprojects.common.shared.util.DevException;
 import com.universeprojects.common.shared.util.Strings;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,6 +52,11 @@ class ControllerRegistry {
         Set<Class<? extends PageController>> controllerClasses = reflections.getSubTypesOf(PageController.class);
 
         for (Class<? extends PageController> controllerClass : controllerClasses) {
+            if (Modifier.isAbstract(controllerClass.getModifiers())) {
+                log.info("Ignoring abstract class " + Strings.inQuotes(controllerClass.getName()));
+                continue;
+            }
+
             if (!controllerClass.isAnnotationPresent(Controller.class)) {
                 log.warn("Ignoring controller class " + Strings.inQuotes(controllerClass.getName()) +
                         " because it's not annotated with @" + Controller.class.getSimpleName());
