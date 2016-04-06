@@ -36,6 +36,9 @@ public abstract class PageController {
         if (Strings.isEmpty(pageName)) {
             throw new IllegalArgumentException("Page name can't be empty");
         }
+        if (!PageControllerFilter.isValidPageName(pageName)) {
+            throw new IllegalArgumentException("Invalid page name: " + Strings.inQuotes(pageName));
+        }
 
         this.pageName = pageName;
     }

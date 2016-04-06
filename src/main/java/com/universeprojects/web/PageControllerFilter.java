@@ -91,8 +91,8 @@ public class PageControllerFilter implements Filter {
      */
     private PageController getController(HttpServletRequest request) throws IOException {
         String requestURI = request.getRequestURI();
-        if (!requestURI.equals(uriPrefix) && !requestURI.matches(uriPrefix + "\\w+")) {
-            // If the URL doesn't match the expected format, redirect to root
+        if (!requestURI.equals(uriPrefix) && !requestURI.matches(uriPrefix + PAGE_NAME_REGEX)) {
+            // If the URL doesn't match the expected format for a controller, let it continue down the filter chain
             return null;
         }
 
@@ -106,6 +106,22 @@ public class PageControllerFilter implements Filter {
 
         return controller;
     }
+
+    /** @return TRUE if the given page name is valid, FALSE otherwise */
+    static boolean isValidPageName(String pageName) {
+        if (Strings.isEmpty(pageName)) {
+            return false;
+        }
+        return pageName.matches(PAGE_NAME_REGEX);
+    }
+
+    /**
+     * This regex defines the accepted page name format, as follows:
+     *
+     * 1. Consisting of alpha-numeric characters 'A-Z', 'a-z', '0-9'
+     * 2. May consist of multiple words, separated by '-', or '_'
+     */
+    private static final String PAGE_NAME_REGEX = "([A-Za-z0-9]+[_\\-]?)*[A-Za-z0-9]+";
 
     @Override
     public void destroy() {
