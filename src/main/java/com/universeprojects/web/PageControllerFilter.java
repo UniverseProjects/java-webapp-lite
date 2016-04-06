@@ -17,9 +17,12 @@ public class PageControllerFilter implements Filter {
     private final static Logger log = Logger.getLogger(PageControllerFilter.class);
 
     private String uriPrefix;
+    protected ServletContext servletContext;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        this.servletContext = filterConfig.getServletContext();
+
         String filterName = filterConfig.getFilterName();
 
         // Verify the init parameters, that were supposed to be set in web.xml
@@ -63,8 +66,8 @@ public class PageControllerFilter implements Filter {
 
         // TODO: For now, pass the request/response along to the controller
         // TODO: In the future, create a suitable abstraction to limit the controller's power
+        controller.setupThreadLocal(request, response, servletContext);
         String targetJspResourcePath = null;
-        controller.setupThreadLocal(request, response);
         try {
             targetJspResourcePath = controller.processRequest(request, response);
         } finally {

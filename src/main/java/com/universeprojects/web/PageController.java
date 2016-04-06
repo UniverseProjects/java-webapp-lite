@@ -2,6 +2,7 @@ package com.universeprojects.web;
 
 import com.universeprojects.common.shared.util.Strings;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,15 +53,19 @@ public abstract class PageController {
 
     private ThreadLocal<HttpServletRequest> threadLocalRequest = new ThreadLocal<>();
     private ThreadLocal<HttpServletResponse> threadLocalResponse = new ThreadLocal<>();
+    private ThreadLocal<ServletContext> threadLocalServletContext = new ThreadLocal<>();
 
-    void setupThreadLocal(HttpServletRequest request, HttpServletResponse response) {
+
+    void setupThreadLocal(HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
         threadLocalRequest.set(request);
         threadLocalResponse.set(response);
+        threadLocalServletContext.set(servletContext);
     }
 
     void clearThreadLocal() {
         threadLocalRequest.set(null);
         threadLocalResponse.set(null);
+        threadLocalServletContext.set(null);
     }
 
     protected HttpServletRequest getRequest() {
@@ -70,6 +75,8 @@ public abstract class PageController {
     protected HttpServletResponse getResponse() {
         return threadLocalResponse.get();
     }
+
+    protected ServletContext getServletContext() {return threadLocalServletContext.get(); }
 
     /**
      * (To be implemented by child class)
