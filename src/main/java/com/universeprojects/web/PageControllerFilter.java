@@ -125,7 +125,7 @@ public class PageControllerFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        // nada
     }
 
 }
