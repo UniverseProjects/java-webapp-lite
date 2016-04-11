@@ -58,12 +58,12 @@ class ControllerRegistry {
             }
 
             if (!controllerClass.isAnnotationPresent(Controller.class)) {
-                log.warn("Ignoring controller class " + Strings.inQuotes(controllerClass.getName()) +
+                log.info("Ignoring controller class " + Strings.inQuotes(controllerClass.getName()) +
                         " because it's not annotated with @" + Controller.class.getSimpleName());
                 continue;
             }
 
-            log.info("Registering controller: " + controllerClass.getSimpleName());
+            log.debug("Registering controller class: " + controllerClass.getName());
             final PageController controller;
             try {
                 controller = controllerClass.newInstance();
