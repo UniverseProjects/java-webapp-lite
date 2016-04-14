@@ -122,9 +122,9 @@ public class PageControllerFilter implements Filter {
      * This regex defines the accepted page name format, as follows:
      *
      * 1. Consisting of alpha-numeric characters 'A-Z', 'a-z', '0-9'
-     * 2. May consist of multiple words, separated by '-', or '_'
+     * 2. May consist of multiple words, separated by '-', '_', or '/'
      */
-    private static final String PAGE_NAME_REGEX = "([A-Za-z0-9]+[_\\-]?)*[A-Za-z0-9]+";
+    private static final String PAGE_NAME_REGEX = "([A-Za-z0-9]+[\\-_/]?)*[A-Za-z0-9]+";
 
     @Override
     public void destroy() {
