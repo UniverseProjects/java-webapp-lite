@@ -114,6 +114,8 @@ public class PageControllerFilter implements Filter {
     static boolean isValidPageName(String pageName) {
         if (Strings.isEmpty(pageName)) {
             return false;
+        } else if (pageName.equals("/")) {
+            return true;
         }
         return pageName.matches(PAGE_NAME_REGEX);
     }
