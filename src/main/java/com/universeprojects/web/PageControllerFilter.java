@@ -7,6 +7,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * This servlet takes care of routing incoming requests to appropriate page controllers.
@@ -49,11 +50,12 @@ public class PageControllerFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         if (!(servletRequest instanceof HttpServletRequest) || !(servletResponse instanceof HttpServletResponse)) {
             filterChain.doFilter(servletRequest, servletResponse);
+            log.debug("non-http request " + servletRequest);
             return;
         }
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        log.debug("Processing GET request");
+        log.debug("Processing GET request to " + request.getRequestURI());
         // TODO: When the page is loaded for the first time, static resources are requested separately (CSS, JS, images)
         // TODO: I think that these N requests are routed to this method. If confirmed, the extra calls should be ignored!
 
@@ -61,8 +63,11 @@ public class PageControllerFilter implements Filter {
         if (controller == null) {
             // controller not found for this URL - abort
             filterChain.doFilter(request, response);
+            log.debug("No controller for " + request.getRequestURI() + " - Processing chain");
             return;
         }
+
+        log.debug("Found controller for " + request.getRequestURI() + ": " + controller.getPageName());
 
         // TODO: For now, pass the request/response along to the controller
         // TODO: In the future, create a suitable abstraction to limit the controller's power
@@ -94,12 +99,13 @@ public class PageControllerFilter implements Filter {
      */
     private PageController getController(HttpServletRequest request) throws IOException {
         String requestURI = request.getRequestURI();
-        if (!requestURI.equals(uriPrefix) && !requestURI.matches(uriPrefix + PAGE_NAME_REGEX)) {
-            // If the URL doesn't match the expected format for a controller, let it continue down the filter chain
+        if (!requestURI.startsWith(uriPrefix)) {
+            // If the URL doesn't match the url prefix, let it continue down the filter chain
             return null;
         }
 
         String pageName = requestURI.substring(uriPrefix.length());
+
         //Dev.check(!Strings.isEmpty(pageName), "Looks like someone messed with page-controller URL routing"); // regression-check
 
         PageController controller = ControllerRegistry.INSTANCE.getController(pageName);
@@ -117,7 +123,7 @@ public class PageControllerFilter implements Filter {
         } else if (pageName.equals("/")) {
             return true;
         }
-        return pageName.matches(PAGE_NAME_REGEX);
+        return PAGE_NAME_REGEX.matcher(pageName).matches();
     }
 
     /**
@@ -126,7 +132,7 @@ public class PageControllerFilter implements Filter {
      * 1. Consisting of alpha-numeric characters 'A-Z', 'a-z', '0-9'
      * 2. May consist of multiple words, separated by '-', '_', or '/'
      */
-    private static final String PAGE_NAME_REGEX = "([A-Za-z0-9]+[\\-_/]?)*[A-Za-z0-9]+";
+    private static final Pattern PAGE_NAME_REGEX = Pattern.compile("([A-Za-z0-9]+[\\-_/]?)*[A-Za-z0-9]+");
 
     @Override
     public void destroy() {
