@@ -1,10 +1,9 @@
 package com.universeprojects.web;
 
-import com.universeprojects.common.shared.log.Logger;
-import com.universeprojects.common.shared.util.Dev;
-import com.universeprojects.common.shared.util.DevException;
-import com.universeprojects.common.shared.util.Strings;
 import org.reflections.Reflections;
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.Set;
  */
 class ControllerRegistry {
 
-    private final static Logger log = Logger.getLogger(ControllerRegistry.class);
+    private final static Logger log = LoggerFactory.getLogger(ControllerRegistry.class);
 
     /** Holds the singleton instance of this class */
     public static final ControllerRegistry INSTANCE = new ControllerRegistry();
@@ -45,7 +44,10 @@ class ControllerRegistry {
             // ignore this call, if the registry is already initialized
             return;
         }
-        Dev.checkNotEmpty(baseScanPackage); // expected to be verified by the caller
+        if (Strings.isEmpty(baseScanPackage)) {
+            // expected to be verified by the caller
+            throw new IllegalArgumentException("Base scan package can't be impty");
+        }
 
         log.info("Scanning for page-controller classes in package " + Strings.inQuotes(baseScanPackage));
         Reflections reflections = new Reflections(baseScanPackage);
@@ -69,7 +71,7 @@ class ControllerRegistry {
                 controller = controllerClass.newInstance();
             }
             catch (InstantiationException | IllegalAccessException e) {
-                throw new DevException("Problem creating an instance of class " + Strings.inQuotes(controllerClass.getName()) +
+                throw new RuntimeException("Problem creating an instance of class " + Strings.inQuotes(controllerClass.getName()) +
                         ". The controller class must declare a public no-arg constructor " + controllerClass.getSimpleName() + "()", e);
             }
 

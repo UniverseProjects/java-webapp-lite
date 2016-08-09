@@ -1,7 +1,7 @@
 package com.universeprojects.web;
 
-import com.universeprojects.common.shared.log.Logger;
-import com.universeprojects.common.shared.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class PageControllerFilter implements Filter {
 
-    private final static Logger log = Logger.getLogger(PageControllerFilter.class);
+    private final static Logger log = LoggerFactory.getLogger(PageControllerFilter.class);
 
     private String uriPrefix;
     protected ServletContext servletContext;

@@ -3,9 +3,7 @@ apply from: gradle.rootProject.baseScriptPath
 apply plugin: 'war'
 
 dependencies {
-    compile project(':UPCommon')
-    compile project(':UPLog')
-
+    compile 'org.slf4j:slf4j-api:1.6.1'
     compile 'org.reflections:reflections:0.9.10'
     providedCompile 'javax.servlet:jsp-api:2.0'
 }
