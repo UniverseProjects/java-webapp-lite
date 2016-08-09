@@ -1,10 +1,9 @@
 # simple-java-web
-### A very lightweight Java web-framework
+## (A very lightweight Java web-framework)
 
-#### 1. Setup the framework in your web.xml 
+### 1. Set up the framework in your web.xml (you only need to do this once)
 
 The setup below assumes that all your controllers will reside in package "com.mywebsite.controllers".
-You only need to do this once.
 
 ```xml
 <!-- Page controller servlet (locates controllers for various pages) -->
@@ -26,7 +25,7 @@ You only need to do this once.
 </filter-mapping>
 ```
 
-#### 2. Create a page controller
+### 2. Create a page controller
 
 ```java
 package com.mywebsite.controllers;
@@ -57,7 +56,7 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
 
 ```
 
-#### 3. Create JSP file /WEB-INF/pages/hello.jsp
+### 3. Create JSP file /WEB-INF/pages/hello.jsp
 
 ```html
 <!DOCTYPE html>
@@ -71,4 +70,8 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
   </body>
 </html>
 ```
+
+### 4. Access your page
+
+After the application has been deployed, the sample page will be accessible at URL "<deploymnet root>/hello"
 
