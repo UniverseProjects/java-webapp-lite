@@ -72,8 +72,12 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
 
 ### Create JSP page /WEB-INF/pages/hello.jsp
 
-This file is in charge of the presentation of the values that come out of the controller.
-Notice, that request argument "message" from the controller is referenced here as ${message}.
+This file path matches the String value returned from the controller's processRequest() method.
+
+You aren't strictly required to keep your JSPs in this particular directory, however this is the recommended practice because the server will prevent direct client access to anything residing under "/WEB-INF".
+
+This JSP file is in charge of the presentation of the values that come out of the controller.
+Notice, that request argument "message" sent from the controller is referenced here as ${message}.
 
 ```html
 <!DOCTYPE html>
