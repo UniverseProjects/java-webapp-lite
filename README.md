@@ -2,7 +2,16 @@
 
 Follow the instructions below to set up a sample page.
 
-#### 1. Set up the framework in your web.xml (you only need to do this once)
+
+### A word on dependencies (required libraries)
+
+This project uses the Gradle build system for dependency-management and packaging.
+If you are unfamiliar with Gradle, or if you use another approach to manage your dependencies, you will need to acquire the libraries that this code depends on.
+
+You can find the complete list of libraries inside build.gradle file, in the "dependencies" { } block.
+
+
+### Set up the framework in your web.xml (you only need to do this once)
 
 The setup below assumes that all your controllers will reside in package "com.mywebsite.controllers".
 
@@ -26,7 +35,7 @@ The setup below assumes that all your controllers will reside in package "com.my
 </filter-mapping>
 ```
 
-#### 2. Create a controller for your page
+### Create a controller for your page
 
 Every JSP page is coupled with a "controller", which is a Java class.
 
@@ -61,7 +70,7 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
 
 ```
 
-#### 3. Create JSP file /WEB-INF/pages/hello.jsp
+### Create JSP page /WEB-INF/pages/hello.jsp
 
 This file is in charge of the presentation of the values that come out of the controller.
 Notice, that request argument "message" from the controller is referenced here as ${message}.
@@ -78,7 +87,7 @@ Notice, that request argument "message" from the controller is referenced here a
 </html>
 ```
 
-#### 4. Access your page
+### Access your page
 
 Once you deploy your application, the sample page will be accessible at URL "**(deployment_root)**/hello"
 
