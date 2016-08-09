@@ -1,4 +1,4 @@
-# simple-java-web (A very lightweight Java web-framework)
+# java-webapp-lite: a tiny and lightweight Java web-framework
 
 Follow the instructions below to set up a sample page.
 
