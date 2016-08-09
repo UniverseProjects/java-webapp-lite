@@ -6,7 +6,7 @@ Follow the instructions below to set up a sample page.
 ### A word on dependencies (required libraries)
 
 This project uses the Gradle build system for dependency-management and packaging.
-If you are unfamiliar with Gradle, or if you use another approach to manage your dependencies, you will need to acquire the libraries that this code depends on.
+If you are unfamiliar with Gradle, or if you use another approach to manage your dependencies, you will need to acquire the libraries that this framework depends on.
 
 You can find the complete list of libraries inside build.gradle file, in the "dependencies" { } block.
 
