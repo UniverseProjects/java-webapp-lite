@@ -80,7 +80,7 @@ Notice, that request argument "message" from the controller is referenced here a
 
 #### 4. Access your page
 
-Once you deploy your application, the sample page will be accessible at URL "**deploymnet root**/hello"
+Once you deploy your application, the sample page will be accessible at URL "**(deployment_root)**/hello"
 
 Note that the "/hello" part corresponds to the page name "hello", defined in the controller's constructor.
 
