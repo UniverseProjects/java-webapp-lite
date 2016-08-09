@@ -26,7 +26,11 @@ The setup below assumes that all your controllers will reside in package "com.my
 </filter-mapping>
 ```
 
-#### 2. Create a page controller
+#### 2. Create a controller for your page
+
+Every JSP page is coupled with a "controller", which is a Java class.
+
+The idea here is to separate logic from presentation as much as possible. All calculations / decisions should be made in the controller, and then these values are passed along to the JSP for rendering.
 
 ```java
 package com.mywebsite.controllers;
@@ -59,6 +63,9 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
 
 #### 3. Create JSP file /WEB-INF/pages/hello.jsp
 
+This file is in charge of the presentation of the values that come out of the controller.
+Notice, that request argument "message" from the controller is referenced here as ${message}.
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +73,6 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
     <title>My Website</title>
   </head>
   <body>
-    <h1>My Website</h1>
     <h3 style="color: red">Message: ${message}</h3>
   </body>
 </html>
@@ -74,5 +80,7 @@ protected final String processRequest(HttpServletRequest request, HttpServletRes
 
 #### 4. Access your page
 
-After the application has been deployed, the sample page will be accessible at URL "<deploymnet root>/hello"
+Once you deploy your application, the sample page will be accessible at URL "<deploymnet root>/hello"
+
+Note that the "/hello" part corresponds to the page name "hello", defined in the controller's constructor.
 
