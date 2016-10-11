@@ -122,7 +122,7 @@ class ControllerRegistry {
     }
 
     /**
-     * Retrieves a controleller, registered under the specified page name
+     * Retrieves a controller, registered under the specified page name
      *
      * @return The controller instance, or NULL if nothing was found
      */
