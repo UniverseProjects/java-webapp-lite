@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
- * This servlet takes care of routing incoming requests to appropriate page controllers.
- * The system only needs this single servlet to function, regardless of how many controllers are defined.
+ * This component takes care of routing incoming requests to appropriate page controllers.
+ * The system only needs this single filter to function, regardless of how many controllers are defined.
  */
 public class PageControllerFilter implements Filter {
 
