@@ -1,6 +1,6 @@
-# java-webapp-lite: a tiny and lightweight Java web-framework
+# java-webapp-lite: a tiny and lightweight web-framework for JSPs
 
-### What does this framework do?
+### Scriptlets, be gone!
 
 The main purpose of this framework is discouraging the use of Java scriptlets inside JSPs. Though they may seem like a handy shortcut, scriptlets come with a number of costly drawbacks:
 
