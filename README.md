@@ -1,4 +1,4 @@
-# java-webapp-lite: a tiny and lightweight web-framework for JSPs
+# java-webapp-lite: a tiny framework for de-cluttering JSPs 
 
 ### Scriptlets, be gone!
 
