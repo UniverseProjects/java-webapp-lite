@@ -1,6 +1,23 @@
 # java-webapp-lite: a tiny and lightweight Java web-framework
 
-Follow the instructions below to set up a sample page.
+### What does this framework do?
+
+The main idea behind this framework is discouraging the use of Java scriptlets inside JSPs. 
+Though they may seem like a handy shortcut, scriptlets come with a number of costly drawbacks:
+
+ * They are difficult to debug, as in many cases exception stack traces are obfuscated
+ * IDE support for scriptlets is worse than for pure Java classes (auto-complete, refactoring, etc.)
+ * The code is awkward to read because it is intertwined with HTML tags
+
+These drawbacks are severe enough to move away from the practice altogether, and seek a better alternative.
+
+As a general software design rule, it's in our best interest to separate logic (calculations and decisions) from presentation code (layout and styling). This makes the implementation more maintainable, and helps reduce "code distraction". 
+
+In a nutshell, this is how it all works together:
+ 1. Every JSP page has a Java class associated with it, called a "controller". The JSP itself contains no Java code.
+ 2. Upon every access to the page, its Java controller runs first to prepare a "data payload" for the page
+ 3. The data payload is then handed over to the JSP, which incorporates it into HTML for rendering
+
 
 
 ### A word on dependencies (required libraries)
