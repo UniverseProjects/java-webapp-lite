@@ -2,8 +2,7 @@
 
 ### What does this framework do?
 
-The main idea behind this framework is discouraging the use of Java scriptlets inside JSPs. 
-Though they may seem like a handy shortcut, scriptlets come with a number of costly drawbacks:
+The main purpose of this framework is discouraging the use of Java scriptlets inside JSPs. Though they may seem like a handy shortcut, scriptlets come with a number of costly drawbacks:
 
  * They are difficult to debug, as in many cases exception stack traces are obfuscated
  * IDE support for scriptlets is worse than for pure Java classes (auto-complete, refactoring, etc.)
