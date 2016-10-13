@@ -1,4 +1,4 @@
-# java-webapp-lite: a tiny framework for de-cluttering JSPs 
+# java-webapp-lite: a tiny framework for de-cluttering JSPs
 
 ### Scriptlets, be gone!
 
@@ -10,7 +10,7 @@ The main purpose of this framework is discouraging the use of [Java scriptlets](
 
 These drawbacks are severe enough to move away from the practice altogether, and seek a better alternative.
 
-As a general software design rule, it's in our best interest to separate logic (calculations and decisions) from presentation code (layout and styling). This makes the implementation more maintainable, and helps reduce "code distraction". 
+As a general software design rule, it's in our best interest to separate logic (calculations and decisions) from presentation code (layout and styling). This makes the implementation more maintainable, and helps reduce "code distraction".
 
 In a nutshell, this is how it all works together:
  1. Every JSP page has a Java class associated with it, called a "controller". The JSP itself contains no Java code.
