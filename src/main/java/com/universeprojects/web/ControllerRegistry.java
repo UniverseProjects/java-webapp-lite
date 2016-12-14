@@ -60,8 +60,11 @@ class ControllerRegistry {
             }
 
             if (!controllerClass.isAnnotationPresent(Controller.class)) {
-                log.info("Ignoring controller class " + Strings.inQuotes(controllerClass.getName()) +
-                        " because it's not annotated with @" + Controller.class.getSimpleName());
+                throw new RuntimeException("Non-abstract class " + Strings.inQuotes(controllerClass.getName()) + " must be annotated with @" + Controller.class.getSimpleName());
+            }
+
+            if (controllerClass.getAnnotation(Controller.class).enabled() == false) {
+                log.info("Ignoring disabled controller class " + Strings.inQuotes(controllerClass.getName()));
                 continue;
             }
 
