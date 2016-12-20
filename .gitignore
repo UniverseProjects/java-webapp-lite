@@ -9,3 +9,4 @@ bin
 .project
 *.iml
 .gwt-log
+.DS_Store
