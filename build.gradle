@@ -2,6 +2,9 @@ apply from: gradle.rootProject.baseScriptPath
 
 apply plugin: 'war'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 dependencies {
     compile 'org.slf4j:slf4j-api:1.6.1'
     compile 'org.reflections:reflections:0.9.10'
