@@ -1,6 +1,16 @@
 apply from: gradle.rootProject.baseScriptPath
 
 apply plugin: 'war'
+apply plugin: 'maven-publish'
+
+repositories {
+    jcenter()
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier "sources"
+}
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -9,4 +19,27 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.6.1'
     compile 'org.reflections:reflections:0.9.10'
     providedCompile 'javax.servlet:jsp-api:2.0'
+}
+
+publishing {
+    repositories {
+        maven {
+            credentials {
+                username = "${System.getProperty("mavenUser")}"
+                password = "${System.getProperty("mavenPassword")}"
+            }
+            url "http://dev.universeprojects.com/archiva/repository/snapshots/"
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.universeprojects'
+            artifactId 'java-webapp-lite'
+            //noinspection GroovyAssignabilityCheck
+            version '1.0-SNAPSHOT'
+
+            from components.java
+            artifact sourceJar
+        }
+    }
 }
