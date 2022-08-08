@@ -1,4 +1,4 @@
-apply from: gradle.rootProject.baseScriptPath
+//apply from: gradle.rootProject.baseScriptPath
 
 apply plugin: 'war'
 apply plugin: 'maven-publish'
