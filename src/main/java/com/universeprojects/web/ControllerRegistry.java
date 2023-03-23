@@ -36,49 +36,52 @@ class ControllerRegistry {
      * This is called at servlet-initialization time, to detect all the page-controllers
      * that are present on the classpath, and to register them for use with the dispatcher servlet.
      *
-     * @param baseScanPackage The package that the scan is restricted to. For example, "com.universeprojects.myapp.controllers".<br/>
+     * @param baseScanPackageValue The package that the scan is restricted to. For example, "com.universeprojects.myapp.controllers".<br/>
      *                        A less-restricted package, such as "com", would cause the scan to be noticeably slower.
      */
-    synchronized void initialize(String baseScanPackage) {
+    synchronized void initialize(String baseScanPackageValue) {
         if (initialized) {
             // ignore this call, if the registry is already initialized
             return;
         }
-        if (Strings.isEmpty(baseScanPackage)) {
+        if (Strings.isEmpty(baseScanPackageValue)) {
             // expected to be verified by the caller
             throw new IllegalArgumentException("Base scan package can't be impty");
         }
 
-        log.info("Scanning for page-controller classes in package " + Strings.inQuotes(baseScanPackage));
-        Reflections reflections = new Reflections(baseScanPackage);
-        Set<Class<? extends PageController>> controllerClasses = reflections.getSubTypesOf(PageController.class);
+        String[] baseScanPackages = baseScanPackageValue.split(",");
 
-        for (Class<? extends PageController> controllerClass : controllerClasses) {
-            if (Modifier.isAbstract(controllerClass.getModifiers())) {
-                log.info("Ignoring abstract class " + Strings.inQuotes(controllerClass.getName()));
-                continue;
-            }
+        for (String baseScanPackage : baseScanPackages) {
+            log.info("Scanning for page-controller classes in package " + Strings.inQuotes(baseScanPackage));
+            Reflections reflections = new Reflections(baseScanPackage);
+            Set<Class<? extends PageController>> controllerClasses = reflections.getSubTypesOf(PageController.class);
 
-            if (!controllerClass.isAnnotationPresent(Controller.class)) {
-                throw new RuntimeException("Non-abstract class " + Strings.inQuotes(controllerClass.getName()) + " must be annotated with @" + Controller.class.getSimpleName());
-            }
+            for (Class<? extends PageController> controllerClass : controllerClasses) {
+                if (Modifier.isAbstract(controllerClass.getModifiers())) {
+                    log.info("Ignoring abstract class " + Strings.inQuotes(controllerClass.getName()));
+                    continue;
+                }
 
-            if (controllerClass.getAnnotation(Controller.class).enabled() == false) {
-                log.info("Ignoring disabled controller class " + Strings.inQuotes(controllerClass.getName()));
-                continue;
-            }
+                if (!controllerClass.isAnnotationPresent(Controller.class)) {
+                    throw new RuntimeException("Non-abstract class " + Strings.inQuotes(controllerClass.getName()) + " must be annotated with @" + Controller.class.getSimpleName());
+                }
 
-            log.debug("Registering controller class: " + controllerClass.getName());
-            final PageController controller;
-            try {
-                controller = controllerClass.newInstance();
-            }
-            catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException("Problem creating an instance of class " + Strings.inQuotes(controllerClass.getName()) +
-                        ". The controller class must declare a public no-arg constructor " + controllerClass.getSimpleName() + "()", e);
-            }
+                if (controllerClass.getAnnotation(Controller.class).enabled() == false) {
+                    log.info("Ignoring disabled controller class " + Strings.inQuotes(controllerClass.getName()));
+                    continue;
+                }
 
-            registerController(controller);
+                log.debug("Registering controller class: " + controllerClass.getName());
+                final PageController controller;
+                try {
+                    controller = controllerClass.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new RuntimeException("Problem creating an instance of class " + Strings.inQuotes(controllerClass.getName()) +
+                            ". The controller class must declare a public no-arg constructor " + controllerClass.getSimpleName() + "()", e);
+                }
+
+                registerController(controller);
+            }
         }
 
 
